@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <h2 class="text-center">Iniciar Sesión</h2>
+        <form id="loginForm">
+            <div class="mb-3">
+                <label for="username" class="form-label">Usuario</label>
+                <input type="text" class="form-control" id="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+            <button type="button" class="btn btn-link" data-bs-toggle="modal"
+                data-bs-target="#resetPasswordModal">Olvidé mi contraseña</button>
+        </form>
+    </div>
+
+    <!-- Modal para Restablecer Contraseña -->
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resetPasswordModalLabel">Restablecer Contraseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="resetPasswordForm">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Enviar Código</button>
+                    </form>
+                    <div id="verificationSection" style="display: none;">
+                        <div class="mb-3">
+                            <label for="verificationCode" class="form-label">Código de Verificación</label>
+                            <input type="text" class="form-control" id="verificationCode" maxlength="6" required>
+                        </div>
+                        <button type="button" id="verifyCode" class="btn btn-primary">Verificar Código</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('resetPasswordForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            // Simular el envío del código por correo
+            document.getElementById('verificationSection').style.display = 'block';
+            // Aquí se enviaría el código al correo del usuario
+        });
+
+        document.getElementById('verifyCode').addEventListener('click', function () {
+            const code = document.getElementById('verificationCode').value;
+            // Simular la verificación del código
+            if (code.length === 6) {
+                alert('Código verificado. Ahora puede restablecer su contraseña.');
+                // Redirigir a la página de restablecimiento o abrir un nuevo modal
+                // location.href = 'reset-password.html';
+            } else {
+                alert('Código inválido. Inténtelo de nuevo.');
+            }
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+CREATE DATABASE BDAlicorp;
+use BDAlicorp;
+
+CREATE TABLE categoria (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(20) NOT NULL,
+    estado CHAR(1) NOT NULL CHECK (estado IN ('A', 'I')) -- 'A' para Activo, 'I' para Inactivo
+);
+
+CREATE TABLE proveedor (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(50) NOT NULL,
+    telefono VARCHAR(9) NOT NULL,
+    correo VARCHAR(50) NOT NULL,
+    direccion VARCHAR(150) NOT NULL,
+    estado CHAR(1) NOT NULL CHECK (estado IN ('A', 'I'))
+);
+
+CREATE TABLE area (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(50) NOT NULL,
+    estado CHAR(1) NOT NULL CHECK (estado IN ('A', 'I'))
+);
+
+CREATE TABLE persona (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    dni VARCHAR(8) UNIQUE NOT NULL,
+    nombres VARCHAR(100) NOT NULL,
+    apPaterno VARCHAR(50) NOT NULL,
+    apMaterno VARCHAR(50) NOT NULL,
+    telefono VARCHAR(12) NOT NULL,
+    correo VARCHAR(50) NOT NULL,
+    direccion VARCHAR(150) NOT NULL,
+    sexo CHAR(1) NOT NULL CHECK (sexo IN ('M', 'F', 'I'))
+);
+
+CREATE TABLE empleado (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_persona INT,
+    id_area INT,
+    estado CHAR(1) CHECK (estado IN ('A', 'I')),
+    FOREIGN KEY (id_persona) REFERENCES persona(id),
+    FOREIGN KEY (id_area) REFERENCES area(id)
+);
+
+CREATE TABLE cliente (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_persona INT,
+    FOREIGN KEY (id_persona) REFERENCES persona(id)
+);
+
+CREATE TABLE producto (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    precioCompra DECIMAL(10,2) NOT NULL,
+    precioVenta DECIMAL(10,2) NOT NULL,
+    id_categoria INT NOT NULL,
+    stock INT NOT NULL CHECK (stock >= 0),
+    estado CHAR(1) NOT NULL CHECK (estado IN ('A', 'I')),
+    FOREIGN KEY (id_categoria) REFERENCES categoria(id)
+);
+
+CREATE TABLE usuario (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_empleado INT NOT NULL,
+    login VARCHAR(16) UNIQUE NOT NULL,
+    clave CHAR(32) NOT NULL, -- Clave encriptada con MD5
+    tipo CHAR(1) NOT NULL CHECK (tipo IN ('A', 'V', 'C')),
+    estado CHAR(1) NOT NULL CHECK (estado IN ('A', 'I')),
+    FOREIGN KEY (id_empleado) REFERENCES empleado(id)
+);
+
+CREATE TABLE venta (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    subtotal DECIMAL(10,2) NOT NULL,
+    igv DECIMAL(10,2) NOT NULL,
+    total DECIMAL(10,2) NOT NULL,
+    id_cliente INT NOT NULL,
+    id_usuario INT NOT NULL,
+    fecha DATE NOT NULL,
+    -- estado CHAR(1) NOT NULL CHECK (estado IN ('P', 'C')),
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id)
+);
+
+CREATE TABLE venta_detalle (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_producto INT NOT NULL,
+    id_venta INT NOT NULL,
+    precio DECIMAL(10,2) NOT NULL,
+    cantidad INT NOT NULL CHECK (cantidad > 0),
+    total DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_producto) REFERENCES producto(id),
+    FOREIGN KEY (id_venta) REFERENCES venta(id)
+);
+
+CREATE TABLE compra (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    subtotal DECIMAL(10,2) NOT NULL,
+    igv DECIMAL(10,2) NOT NULL,
+    total DECIMAL(10,2) NOT NULL,
+    id_proveedor INT NOT NULL,
+    id_usuario INT NOT NULL,
+    fecha DATE NOT NULL,
+    -- estado CHAR(1) NOT NULL CHECK (estado IN ('P', 'C')), 
+    FOREIGN KEY (id_proveedor) REFERENCES proveedor(id),
+    FOREIGN KEY (id_usuario) REFERENCES usuario(id)
+);
+
+CREATE TABLE compra_detalle (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_producto INT NOT NULL,
+    id_compra INT NOT NULL,
+    cantidad INT NOT NULL CHECK (cantidad > 0),
+    precio DECIMAL(10,2) NOT NULL,
+    total DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_producto) REFERENCES producto(id),
+    FOREIGN KEY (id_compra) REFERENCES compra(id)
+);
